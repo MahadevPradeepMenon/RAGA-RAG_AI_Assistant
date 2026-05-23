@@ -1,0 +1,7 @@
+Employees may work remotely up to three days per week.
+
+Remote employees must attend all scheduled team meetings.
+
+Company laptops must be used for remote work.
+
+VPN access is required when connecting to internal company systems remotely.

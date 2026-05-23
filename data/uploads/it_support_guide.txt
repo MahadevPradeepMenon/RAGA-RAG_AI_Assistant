@@ -1,0 +1,7 @@
+Employees experiencing technical issues should contact the IT helpdesk.
+
+Laptop setup instructions are available on the onboarding portal.
+
+For password resets, employees should use the self-service password reset tool.
+
+Urgent IT issues should be reported by phone to the IT support team.
