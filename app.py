@@ -1,6 +1,7 @@
 from src.loader import load_documents
 from src.chunker import chunk_documents
 from src.retriever import KeywordRetriever
+from src.answerer import generate_basic_answer
 
 
 def build_pipeline():
@@ -15,26 +16,36 @@ def build_pipeline():
     return retriever, chunks
 
 
-def print_results(question: str, results: list[dict]):
+def print_answer(question: str, answer_data: dict, results: list[dict]):
     """
-    Display retrieved chunks in a readable way.
+    Display the generated answer and sources.
     """
-    print("\nQUESTION:")
+    print("\n" + "=" * 60)
+    print("QUESTION:")
     print(question)
 
-    print("\nTOP MATCHES:")
+    print("\nANSWER:")
+    print(answer_data["answer"])
 
+    print("\nSOURCE:")
+    if answer_data["source"]:
+        print(answer_data["source"])
+    else:
+        print("No source found")
+
+    print(f"\nCONFIDENCE SCORE: {answer_data['confidence']:.2f}")
+
+    print("\nRETRIEVED EVIDENCE:")
     for index, result in enumerate(results, start=1):
-        print("\n" + "=" * 60)
-        print(f"Result {index}")
+        print("\n" + "-" * 60)
+        print(f"Evidence {index}")
         print(f"Source: {result['source']}")
         print(f"Score: {result['score']:.2f}")
-        print("-" * 60)
         print(result["text"])
 
 
 def main():
-    print("Company Knowledge Assistant - V1")
+    print("Company Knowledge Assistant - V1.1")
     print("Type 'exit' to quit.\n")
 
     retriever, chunks = build_pipeline()
@@ -49,7 +60,9 @@ def main():
             break
 
         results = retriever.search(question, top_k=3)
-        print_results(question, results)
+        answer_data = generate_basic_answer(results)
+
+        print_answer(question, answer_data, results)
 
 
 if __name__ == "__main__":
