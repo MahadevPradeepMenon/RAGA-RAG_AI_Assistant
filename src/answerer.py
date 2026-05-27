@@ -14,16 +14,17 @@ def generate_basic_answer(results: list[dict]) -> dict:
 
     best_result = results[0]
 
-    if best_result["score"] <= 0:
+    confidence = best_result.get("hybrid_score", best_result.get("score", 0))
+
+    if confidence <= 0:
         return {
             "answer": "I could not find a relevant answer in the company documents.",
             "source": None,
-            "confidence": best_result["score"]
+            "confidence": confidence
         }
 
     return {
         "answer": best_result["text"],
         "source": best_result["source"],
-        "confidence": best_result["score"]
+        "confidence": confidence
     }
-

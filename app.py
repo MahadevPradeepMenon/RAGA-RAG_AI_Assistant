@@ -1,17 +1,17 @@
 from src.loader import load_documents
 from src.chunker import chunk_documents
-from src.retriever import KeywordRetriever
+from src.hybrid_retriever import HybridRetriever
 from src.answerer import generate_basic_answer
 
 
 def build_pipeline():
     """
-    Load documents, chunk them, and create the retriever.
+    Load documents, chunk them, and create the hybrid retriever.
     """
     documents = load_documents("data/uploads")
     chunks = chunk_documents(documents)
 
-    retriever = KeywordRetriever(chunks)
+    retriever = HybridRetriever(chunks)
 
     return retriever, chunks
 
@@ -40,12 +40,14 @@ def print_answer(question: str, answer_data: dict, results: list[dict]):
         print("\n" + "-" * 60)
         print(f"Evidence {index}")
         print(f"Source: {result['source']}")
-        print(f"Score: {result['score']:.2f}")
+        print(f"Hybrid Score: {result['hybrid_score']:.2f}")
+        print(f"Keyword Score: {result['keyword_score']}")
+        print(f"Vector Score: {result['vector_score']}")
         print(result["text"])
 
 
 def main():
-    print("Company Knowledge Assistant - V1.1")
+    print("Company Knowledge Assistant - V3 Hybrid Retrieval")
     print("Type 'exit' to quit.\n")
 
     retriever, chunks = build_pipeline()
