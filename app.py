@@ -8,6 +8,11 @@ from src.chunker import chunk_documents
 from src.hybrid_retriever import HybridRetriever
 from src.local_answerer import generate_local_answer
 from src.summarizer import generate_summary_response, is_summary_request
+from src.simplifier import (
+    is_simple_request,
+    is_follow_up_simplification,
+    simplify_answer,
+)
 
 
 BASE_DIR = Path(__file__).parent
@@ -122,7 +127,7 @@ def apply_custom_styles():
         }
         </style>
         """,
-        unsafe_allow_html=True
+        unsafe_allow_html=True,
     )
 
 
@@ -147,7 +152,7 @@ def display_header():
         st.markdown("<div class='raga-title'>RAGA</div>", unsafe_allow_html=True)
         st.markdown(
             "<div class='raga-caption'>RAG AI Assistant for answering questions from company documents.</div>",
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
 
 
@@ -173,24 +178,58 @@ def display_chat_history():
                         st.divider()
 
 
+def get_last_assistant_answer() -> str | None:
+    """
+    Find the most recent assistant message in chat history.
+    """
+    for message in reversed(st.session_state.messages):
+        if message["role"] == "assistant":
+            return message["content"]
+
+    return None
+
+
 def handle_user_question(user_question: str, retriever, documents: list[dict]) -> dict:
     """
-    Decide whether the user wants a summary or a normal question-answer response.
+    Decide whether the user wants:
+    - a simple explanation of the previous answer
+    - a document summary
+    - a normal answer
+    - a simplified normal answer
     """
+    if is_follow_up_simplification(user_question):
+        previous_answer = get_last_assistant_answer()
+
+        if previous_answer:
+            return {
+                "answer": simplify_answer(previous_answer),
+                "evidence": [],
+            }
+
+        return {
+            "answer": "I do not have a previous answer to simplify yet. Ask me a question first.",
+            "evidence": [],
+        }
+
     if is_summary_request(user_question):
         summary = generate_summary_response(user_question, documents)
 
         return {
             "answer": summary,
-            "evidence": []
+            "evidence": [],
         }
 
     results = retriever.search(user_question, top_k=3)
     answer_data = generate_local_answer(user_question, results)
 
+    answer = answer_data["answer"]
+
+    if is_simple_request(user_question):
+        answer = simplify_answer(answer)
+
     return {
-        "answer": answer_data["answer"],
-        "evidence": results
+        "answer": answer,
+        "evidence": results,
     }
 
 
@@ -198,7 +237,7 @@ def main():
     st.set_page_config(
         page_title="RAGA",
         page_icon=wheel_icon,
-        layout="wide"
+        layout="wide",
     )
 
     apply_custom_styles()
@@ -210,7 +249,7 @@ def main():
 
         uploaded_file = st.file_uploader(
             "Upload a company document",
-            type=["txt"]
+            type=["txt"],
         )
 
         if uploaded_file is not None:
@@ -254,10 +293,12 @@ def main():
     user_question = st.chat_input("Ask RAGA a question or request a summary...")
 
     if user_question:
-        st.session_state.messages.append({
-            "role": "user",
-            "content": user_question
-        })
+        st.session_state.messages.append(
+            {
+                "role": "user",
+                "content": user_question,
+            }
+        )
 
         with st.chat_message("user"):
             st.write(user_question)
@@ -278,7 +319,7 @@ def main():
 
         assistant_message = {
             "role": "assistant",
-            "content": response["answer"]
+            "content": response["answer"],
         }
 
         if response["evidence"]:

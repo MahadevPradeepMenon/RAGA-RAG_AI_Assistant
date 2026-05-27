@@ -11,29 +11,51 @@ STOPWORDS = {
 }
 
 
+SIMPLE_REPLACEMENTS = {
+    "annual leave": "paid time off",
+    "vacation requests": "requests for time off",
+    "unused leave days": "unused days off",
+    "carried over": "moved to the next year",
+    "remotely": "from home or outside the office",
+    "remote work": "working from home or outside the office",
+    "scheduled team meetings": "planned team meetings",
+    "internal company systems": "company tools and websites",
+    "technical issues": "computer or system problems",
+    "IT helpdesk": "IT support team",
+    "onboarding portal": "new-starter website",
+    "self-service password reset tool": "online password reset tool",
+    "VPN": "secure company connection",
+    "HR": "Human Resources",
+    "entitled to": "allowed to have",
+    "submitted": "sent",
+    "approved": "agreed to",
+    "required": "needed",
+}
+
+
 def split_into_sentences(text: str) -> list[str]:
-    """
-    Split text into simple sentences.
-    """
     sentences = re.split(r"(?<=[.!?])\s+", text.strip())
     return [sentence.strip() for sentence in sentences if sentence.strip()]
 
 
 def tokenize_words(text: str) -> list[str]:
-    """
-    Convert text into lowercase word tokens.
-    """
     words = re.findall(r"\b\w+\b", text.lower())
     return [word for word in words if word not in STOPWORDS]
 
 
-def summarize_text(text: str, max_sentences: int = 3) -> list[str]:
-    """
-    Create a simple extractive summary by selecting important sentences.
+def simplify_sentence(sentence: str) -> str:
+    simplified = sentence
 
-    This does not rewrite text like an LLM.
-    It selects the most important sentences from the document.
-    """
+    for phrase, replacement in SIMPLE_REPLACEMENTS.items():
+        pattern = re.compile(rf"\b{re.escape(phrase)}\b", re.IGNORECASE)
+        simplified = pattern.sub(replacement, simplified)
+
+    simplified = simplified.replace(" per year", " each year")
+
+    return simplified
+
+
+def summarize_text(text: str, max_sentences: int = 2) -> list[str]:
     sentences = split_into_sentences(text)
 
     if len(sentences) <= max_sentences:
@@ -73,9 +95,6 @@ def summarize_text(text: str, max_sentences: int = 3) -> list[str]:
 
 
 def is_summary_request(question: str) -> bool:
-    """
-    Detect whether the user is asking for a summary.
-    """
     question_lower = question.lower()
 
     summary_keywords = [
@@ -93,9 +112,6 @@ def is_summary_request(question: str) -> bool:
 
 
 def is_simple_request(question: str) -> bool:
-    """
-    Detect whether the user wants a simpler explanation.
-    """
     question_lower = question.lower()
 
     simple_keywords = [
@@ -112,11 +128,11 @@ def is_simple_request(question: str) -> bool:
 
 
 def select_documents_for_summary(question: str, documents: list[dict]) -> list[dict]:
-    """
-    If the user mentions a specific document name, summarize that document.
-    Otherwise, summarize all documents.
-    """
     question_lower = question.lower()
+
+    if "all documents" in question_lower or "all docs" in question_lower:
+        return documents
+
     matching_documents = []
 
     for document in documents:
@@ -135,28 +151,30 @@ def select_documents_for_summary(question: str, documents: list[dict]) -> list[d
 
 
 def generate_summary_response(question: str, documents: list[dict]) -> str:
-    """
-    Generate a summary response for one or more documents.
-    """
     selected_documents = select_documents_for_summary(question, documents)
     simple_mode = is_simple_request(question)
 
-    max_sentences = 2 if simple_mode else 3
+    response_lines = []
 
     if simple_mode:
-        response_lines = ["Here is a simple summary of the relevant document content:\n"]
+        response_lines.append("### Simple Summary")
+        response_lines.append("Here is a plain-English summary of the relevant documents:\n")
     else:
-        response_lines = ["Here is a summary of the relevant document content:\n"]
+        response_lines.append("### Document Summary")
+        response_lines.append("Here is a summary of the relevant documents:\n")
 
     for document in selected_documents:
         source = document["source"]
         text = document["text"]
 
-        summary_sentences = summarize_text(text, max_sentences=max_sentences)
+        summary_sentences = summarize_text(text, max_sentences=2)
 
-        response_lines.append(f"**{source}**")
+        response_lines.append(f"#### {source}")
 
         for sentence in summary_sentences:
+            if simple_mode:
+                sentence = simplify_sentence(sentence)
+
             response_lines.append(f"- {sentence}")
 
         response_lines.append("")
