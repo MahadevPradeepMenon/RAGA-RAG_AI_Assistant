@@ -1,7 +1,7 @@
 from src.loader import load_documents
 from src.chunker import chunk_documents
 from src.hybrid_retriever import HybridRetriever
-from src.answerer import generate_basic_answer
+from src.local_answerer import generate_local_answer
 
 
 def build_pipeline():
@@ -18,26 +18,27 @@ def build_pipeline():
 
 def print_answer(question: str, answer_data: dict, results: list[dict]):
     """
-    Display the generated answer and sources.
+    Display the locally generated answer and supporting evidence.
     """
-    print("\n" + "=" * 60)
+    print("\n" + "=" * 70)
     print("QUESTION:")
     print(question)
 
     print("\nANSWER:")
     print(answer_data["answer"])
 
-    print("\nSOURCE:")
-    if answer_data["source"]:
-        print(answer_data["source"])
+    print("\nSOURCES USED:")
+    if answer_data["sources"]:
+        for source in answer_data["sources"]:
+            print(f"- {source}")
     else:
-        print("No source found")
+        print("No sources found")
 
     print(f"\nCONFIDENCE SCORE: {answer_data['confidence']:.2f}")
 
     print("\nRETRIEVED EVIDENCE:")
     for index, result in enumerate(results, start=1):
-        print("\n" + "-" * 60)
+        print("\n" + "-" * 70)
         print(f"Evidence {index}")
         print(f"Source: {result['source']}")
         print(f"Hybrid Score: {result['hybrid_score']:.2f}")
@@ -47,7 +48,7 @@ def print_answer(question: str, answer_data: dict, results: list[dict]):
 
 
 def main():
-    print("Company Knowledge Assistant - V3 Hybrid Retrieval")
+    print("Company Knowledge Assistant - V4 Free Local RAG")
     print("Type 'exit' to quit.\n")
 
     retriever, chunks = build_pipeline()
@@ -62,7 +63,7 @@ def main():
             break
 
         results = retriever.search(question, top_k=3)
-        answer_data = generate_basic_answer(results)
+        answer_data = generate_local_answer(question, results)
 
         print_answer(question, answer_data, results)
 
