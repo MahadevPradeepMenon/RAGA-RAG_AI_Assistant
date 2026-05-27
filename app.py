@@ -29,11 +29,13 @@ def get_file_signature():
     """
     UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 
+    supported_extensions = {".txt", ".pdf"}
+
     return tuple(
         (file.name, file.stat().st_size, file.stat().st_mtime)
-        for file in sorted(UPLOAD_FOLDER.glob("*.txt"))
+        for file in sorted(UPLOAD_FOLDER.iterdir())
+        if file.is_file() and file.suffix.lower() in supported_extensions
     )
-
 
 @st.cache_resource
 def build_pipeline(file_signature):
@@ -249,7 +251,7 @@ def main():
 
         uploaded_file = st.file_uploader(
             "Upload a company document",
-            type=["txt"],
+            type=["txt","pdf"],
         )
 
         if uploaded_file is not None:
@@ -259,13 +261,18 @@ def main():
         st.subheader("Available documents")
 
         UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
-        txt_files = sorted(UPLOAD_FOLDER.glob("*.txt"))
+        supported_extensions = {".txt", ".pdf"}
 
-        if txt_files:
-            for file in txt_files:
-                st.write(file.name)
-        else:
-            st.warning("No documents found. Add .txt files to data/uploads.")
+    document_files = sorted(
+    file for file in UPLOAD_FOLDER.iterdir()
+    if file.is_file() and file.suffix.lower() in supported_extensions
+)
+
+    if document_files:
+        for file in document_files:
+            st.write(file.name)
+    else:
+        st.warning("No documents found. Add .txt or .pdf files to data/uploads.")
 
         if st.button("Refresh documents"):
             st.cache_resource.clear()
