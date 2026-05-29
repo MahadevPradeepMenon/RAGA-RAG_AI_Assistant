@@ -1,8 +1,9 @@
 from pathlib import Path
 from pypdf import PdfReader
+from docx import Document
 
 
-SUPPORTED_EXTENSIONS = {".txt", ".pdf"}
+SUPPORTED_EXTENSIONS = {".txt", ".pdf", ".docx"}
 
 
 def load_txt_file(file_path: Path) -> str:
@@ -32,6 +33,37 @@ def load_pdf_file(file_path: Path) -> str:
     return "\n".join(text_parts)
 
 
+def load_docx_file(file_path: Path) -> str:
+    """
+    Read a DOCX file and extract text from paragraphs and tables.
+    """
+    document = Document(str(file_path))
+    text_parts = []
+
+    for paragraph in document.paragraphs:
+        paragraph_text = paragraph.text.strip()
+
+        if paragraph_text:
+            text_parts.append(paragraph_text)
+
+    for table_index, table in enumerate(document.tables, start=1):
+        text_parts.append(f"\n[Table {table_index}]")
+
+        for row in table.rows:
+            cells = []
+
+            for cell in row.cells:
+                cell_text = cell.text.strip().replace("\n", " ")
+
+                if cell_text:
+                    cells.append(cell_text)
+
+            if cells:
+                text_parts.append(" | ".join(cells))
+
+    return "\n".join(text_parts)
+
+
 def load_single_document(file_path: Path) -> dict:
     """
     Load one supported document and return source + text.
@@ -42,6 +74,8 @@ def load_single_document(file_path: Path) -> dict:
         text = load_txt_file(file_path)
     elif extension == ".pdf":
         text = load_pdf_file(file_path)
+    elif extension == ".docx":
+        text = load_docx_file(file_path)
     else:
         raise ValueError(f"Unsupported file type: {extension}")
 
@@ -59,6 +93,7 @@ def load_documents(folder_path: str) -> list[dict]:
     Currently supports:
     - .txt
     - .pdf
+    - .docx
     """
     folder = Path(folder_path)
     documents = []

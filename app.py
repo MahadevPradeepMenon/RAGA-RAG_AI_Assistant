@@ -29,7 +29,7 @@ def get_file_signature():
     """
     UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 
-    supported_extensions = {".txt", ".pdf"}
+    supported_extensions = {".txt", ".pdf",".docx"}
 
     return tuple(
         (file.name, file.stat().st_size, file.stat().st_mtime)
@@ -250,10 +250,10 @@ def main():
         st.header("Documents")
 
         uploaded_file = st.file_uploader(
-            "Upload a company document",
-            type=["txt","pdf"],
-        )
-
+    "Upload a company document",
+    type=["txt", "pdf", "docx"],
+)
+        
         if uploaded_file is not None:
             saved_path = save_uploaded_file(uploaded_file)
             st.success(f"Uploaded: {saved_path.name}")
@@ -261,7 +261,7 @@ def main():
         st.subheader("Available documents")
 
         UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
-        supported_extensions = {".txt", ".pdf"}
+        supported_extensions = {".txt", ".pdf",".docx"}
 
     document_files = sorted(
     file for file in UPLOAD_FOLDER.iterdir()
@@ -272,7 +272,7 @@ def main():
         for file in document_files:
             st.write(file.name)
     else:
-        st.warning("No documents found. Add .txt or .pdf files to data/uploads.")
+        st.warning("No documents found. Add .txt, .pdf, or .docx files to data/uploads.")
 
         if st.button("Refresh documents"):
             st.cache_resource.clear()
