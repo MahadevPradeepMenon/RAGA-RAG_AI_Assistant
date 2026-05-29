@@ -1,9 +1,6 @@
 def chunk_text(text: str, chunk_size: int = 80, overlap: int = 20) -> list[str]:
     """
     Split text into word-based chunks with overlap.
-
-    chunk_size = max number of words per chunk
-    overlap = number of words repeated between chunks
     """
     words = text.split()
 
@@ -23,32 +20,36 @@ def chunk_text(text: str, chunk_size: int = 80, overlap: int = 20) -> list[str]:
     return chunks
 
 
-def chunk_documents(documents: list[dict], chunk_size: int = 80, overlap: int = 20) -> list[dict]:
+def chunk_documents(
+    documents: list[dict],
+    chunk_size: int = 80,
+    overlap: int = 20
+) -> list[dict]:
     """
     Convert loaded documents into chunks with metadata.
 
-    Returns:
-    [
-        {
-            "chunk_id": "vacation_policy.txt_chunk_1",
-            "source": "vacation_policy.txt",
-            "text": "Employees are entitled..."
-        }
-    ]
+    Keeps source file and location metadata.
+    For PPTX, location can be "Slide 1", "Slide 2", etc.
     """
     all_chunks = []
 
     for document in documents:
         source = document["source"]
         text = document["text"]
+        file_type = document.get("file_type")
+        location = document.get("location")
 
         chunks = chunk_text(text, chunk_size=chunk_size, overlap=overlap)
 
         for index, chunk in enumerate(chunks, start=1):
+            location_part = f"_{location.replace(' ', '_')}" if location else ""
+
             all_chunks.append({
-                "chunk_id": f"{source}_chunk_{index}",
+                "chunk_id": f"{source}{location_part}_chunk_{index}",
                 "source": source,
-                "text": chunk
+                "file_type": file_type,
+                "location": location,
+                "text": chunk,
             })
 
     return all_chunks

@@ -1,9 +1,11 @@
 from pathlib import Path
+
 from pypdf import PdfReader
 from docx import Document
+from pptx import Presentation
 
 
-SUPPORTED_EXTENSIONS = {".txt", ".pdf", ".docx"}
+SUPPORTED_EXTENSIONS = {".txt", ".pdf", ".docx", ".pptx"}
 
 
 def load_txt_file(file_path: Path) -> str:
@@ -17,9 +19,7 @@ def load_txt_file(file_path: Path) -> str:
 def load_pdf_file(file_path: Path) -> str:
     """
     Read a PDF file and extract text from each page.
-
-    This works best for text-based PDFs.
-    Scanned image PDFs may require OCR later.
+    Works best for text-based PDFs.
     """
     reader = PdfReader(str(file_path))
     text_parts = []
@@ -28,9 +28,9 @@ def load_pdf_file(file_path: Path) -> str:
         page_text = page.extract_text()
 
         if page_text:
-            text_parts.append(f"\n[Page {page_number}]\n{page_text}")
+            text_parts.append(f"[Page {page_number}]\n{page_text}")
 
-    return "\n".join(text_parts)
+    return "\n\n".join(text_parts)
 
 
 def load_docx_file(file_path: Path) -> str:
@@ -64,9 +64,71 @@ def load_docx_file(file_path: Path) -> str:
     return "\n".join(text_parts)
 
 
+def extract_text_from_shape(shape) -> list[str]:
+    """
+    Extract text from a PowerPoint shape.
+
+    Handles:
+    - normal text boxes
+    - placeholders
+    - tables
+    """
+    text_parts = []
+
+    if hasattr(shape, "text"):
+        shape_text = shape.text.strip()
+
+        if shape_text:
+            text_parts.append(shape_text)
+
+    if shape.has_table:
+        for row in shape.table.rows:
+            cells = []
+
+            for cell in row.cells:
+                cell_text = cell.text.strip().replace("\n", " ")
+
+                if cell_text:
+                    cells.append(cell_text)
+
+            if cells:
+                text_parts.append(" | ".join(cells))
+
+    return text_parts
+
+
+def load_pptx_slides(file_path: Path) -> list[dict]:
+    """
+    Read a PPTX file and return one document per slide.
+
+    This is slide-aware:
+    each slide becomes its own searchable document with slide metadata.
+    """
+    presentation = Presentation(str(file_path))
+    slide_documents = []
+
+    for slide_number, slide in enumerate(presentation.slides, start=1):
+        slide_text_parts = []
+
+        for shape in slide.shapes:
+            slide_text_parts.extend(extract_text_from_shape(shape))
+
+        slide_text = "\n".join(slide_text_parts).strip()
+
+        if slide_text:
+            slide_documents.append({
+                "source": file_path.name,
+                "text": slide_text,
+                "file_type": ".pptx",
+                "location": f"Slide {slide_number}",
+            })
+
+    return slide_documents
+
+
 def load_single_document(file_path: Path) -> dict:
     """
-    Load one supported document and return source + text.
+    Load one supported non-PPTX document and return source + text.
     """
     extension = file_path.suffix.lower()
 
@@ -83,6 +145,7 @@ def load_single_document(file_path: Path) -> dict:
         "source": file_path.name,
         "text": text,
         "file_type": extension,
+        "location": None,
     }
 
 
@@ -90,10 +153,13 @@ def load_documents(folder_path: str) -> list[dict]:
     """
     Load all supported documents from a folder.
 
-    Currently supports:
+    Supports:
     - .txt
     - .pdf
     - .docx
+    - .pptx
+
+    PPTX files are loaded slide-by-slide.
     """
     folder = Path(folder_path)
     documents = []
@@ -102,7 +168,18 @@ def load_documents(folder_path: str) -> list[dict]:
         raise FileNotFoundError(f"Folder not found: {folder_path}")
 
     for file_path in folder.iterdir():
-        if file_path.is_file() and file_path.suffix.lower() in SUPPORTED_EXTENSIONS:
+        if not file_path.is_file():
+            continue
+
+        extension = file_path.suffix.lower()
+
+        if extension not in SUPPORTED_EXTENSIONS:
+            continue
+
+        if extension == ".pptx":
+            slide_documents = load_pptx_slides(file_path)
+            documents.extend(slide_documents)
+        else:
             document = load_single_document(file_path)
 
             if document["text"].strip():

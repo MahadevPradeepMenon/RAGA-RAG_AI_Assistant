@@ -21,6 +21,13 @@ ICON_PATH = BASE_DIR / "assets" / "wheel.png"
 
 wheel_icon = Image.open(ICON_PATH).convert("RGBA")
 
+st.set_page_config(
+    page_title="RAGA",
+    page_icon=wheel_icon,
+    layout="wide"
+)
+
+st.set_option("client.toolbarMode","minimal")
 
 def get_file_signature():
     """
@@ -29,7 +36,7 @@ def get_file_signature():
     """
     UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 
-    supported_extensions = {".txt", ".pdf",".docx"}
+    supported_extensions = {".txt", ".pdf",".docx",".pptx"}
 
     return tuple(
         (file.name, file.stat().st_size, file.stat().st_mtime)
@@ -176,6 +183,8 @@ def display_chat_history():
                     for index, result in enumerate(message["evidence"], start=1):
                         st.markdown(f"### Evidence {index}")
                         st.write(f"**Document:** {result['source']}")
+                        if result.get("location"):
+                            st.write(f"**Location:** {result['location']}")
                         st.write(result["text"])
                         st.divider()
 
@@ -236,12 +245,6 @@ def handle_user_question(user_question: str, retriever, documents: list[dict]) -
 
 
 def main():
-    st.set_page_config(
-        page_title="RAGA",
-        page_icon=wheel_icon,
-        layout="wide",
-    )
-
     apply_custom_styles()
     initialise_chat_history()
     display_header()
@@ -250,10 +253,10 @@ def main():
         st.header("Documents")
 
         uploaded_file = st.file_uploader(
-    "Upload a company document",
-    type=["txt", "pdf", "docx"],
-)
-        
+            "Upload a company document",
+            type=["txt", "pdf", "docx", "pptx"],
+        )
+
         if uploaded_file is not None:
             saved_path = save_uploaded_file(uploaded_file)
             st.success(f"Uploaded: {saved_path.name}")
@@ -261,18 +264,19 @@ def main():
         st.subheader("Available documents")
 
         UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
-        supported_extensions = {".txt", ".pdf",".docx"}
 
-    document_files = sorted(
-    file for file in UPLOAD_FOLDER.iterdir()
-    if file.is_file() and file.suffix.lower() in supported_extensions
-)
+        supported_extensions = {".txt", ".pdf", ".docx", ".pptx"}
 
-    if document_files:
-        for file in document_files:
-            st.write(file.name)
-    else:
-        st.warning("No documents found. Add .txt, .pdf, or .docx files to data/uploads.")
+        document_files = sorted(
+            file for file in UPLOAD_FOLDER.iterdir()
+            if file.is_file() and file.suffix.lower() in supported_extensions
+        )
+
+        if document_files:
+            for file in document_files:
+                st.write(file.name)
+        else:
+            st.warning("No documents found. Add .txt, .pdf, .docx, or .pptx files to data/uploads.")
 
         if st.button("Refresh documents"):
             st.cache_resource.clear()
