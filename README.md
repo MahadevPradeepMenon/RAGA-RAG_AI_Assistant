@@ -73,7 +73,7 @@ Vector retrieval helps connect those two meanings.
 
 ### Hybrid Retrieval
 
-RAGA combines BM25 keyword results and vector search results using basic rank-fusion logic. This helps balance exact keyword matching with semantic meaning-based search.
+RAGA combines BM25 keyword results and vector search results using weighted Reciprocal Rank Fusion. This helps balance exact keyword matching with semantic meaning-based search while allowing the retrieval weights to be adjusted and compared.
 
 ## How It Works
 
@@ -100,10 +100,6 @@ Streamlit chat interface
 The assistant does not answer from general knowledge. It searches the uploaded documents first, retrieves the most relevant chunks, and then generates a local answer from the retrieved evidence.
 
 ---
-
-## Retrieval Approach
-
-RAGA uses hybrid retrieval.
 
 ### Keyword Retrieval
 
@@ -195,18 +191,21 @@ Explain that in simple terms.
 
 ---
 
-## Project Structure
-
-```text
 RAG_AI_Assistant/
 ├── app.py
 ├── README.md
 ├── requirements.txt
+├── evaluate_retrieval.py
+├── compare_hybrid_weights.py
+├── inspect_chunks.py
 ├── assets/
 │   └── wheel.png
 ├── data/
-│   └── uploads/
+│   ├── uploads/
+│   └── evaluation/
+│       └── questions.json
 ├── src/
+│   ├── __init__.py
 │   ├── loader.py
 │   ├── chunker.py
 │   ├── retriever.py
@@ -216,7 +215,6 @@ RAG_AI_Assistant/
 │   ├── summarizer.py
 │   └── simplifier.py
 └── tests/
-```
 
 ---
 
@@ -269,22 +267,22 @@ RAGA includes a small retrieval evaluation script to measure whether the retriev
 
 The evaluation set is stored in:
 
+```text 
 data/evaluation/questions.json
+```
 
 ---
 
 ## Current Limitations
 
-* Does not currently support PNG/JPEG OCR
+* No OCR support for scanned PDFs or image files
 * Scanned PDFs may not extract text correctly
-* Does not use a paid LLM API
-* Local answer generation is less fluent than a full LLM response
+* Uses local extractive answer generation rather than a full LLM
+* Local answers may be less fluent than LLM-generated responses
+* Vector retrieval uses `sentence-transformers/all-MiniLM-L6-v2`, which is lightweight but may not perform as strongly as larger embedding models
+* The evaluation set is currently small and based on demo documents
 * No authentication or user accounts
 * Not deployed yet
-* The system currently uses local extractive answer generation rather than a full LLM.
-* Vector retrieval uses `sentence-transformers/all-MiniLM-L6-v2`, which is lightweight and suitable for local semantic search, but may not perform as strongly as larger embedding models.
-* Chunking is document-type-aware but not yet evaluated across a large benchmark dataset.
-* No OCR support for scanned PDFs or image files.
 
 ---
 
@@ -292,11 +290,14 @@ data/evaluation/questions.json
 
 Possible future improvements include:
 
+* Expanding the retrieval evaluation set across more document types
+* Comparing different chunk sizes and chunking strategies
+* Comparing different embedding models for retrieval quality
+* Experimenting with different BM25/vector weighting schemes
 * OCR support for scanned PDFs and images
 * Optional OpenAI or local LLM answer generation
 * FastAPI backend
 * Multilingual answers
-* Better evaluation metrics for retrieval quality
 * Dashboard for retrieval failures and document coverage
 * Deployment to Streamlit Community Cloud or another hosting platform
 
