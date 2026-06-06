@@ -317,7 +317,7 @@ Possible future improvements include:
 * FastAPI backend
 * Multilingual answers
 * Better evaluation metrics for retrieval quality
-* Document-level analytics
+* Dashboard for retrieval failures and document coverage
 * Deployment to Streamlit Community Cloud or another hosting platform
 
 ---
