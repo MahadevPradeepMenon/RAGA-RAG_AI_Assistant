@@ -188,9 +188,6 @@ def display_chat_history():
                         if result.get("location"):
                             st.write(f"**Location:** {result['location']}")
 
-                        if result.get("chunk_strategy"):
-                            st.write(f"**Chunking Strategy:** {result['chunk_strategy']}")
-
                         st.write(result["text"])
                         st.divider()
 
@@ -371,9 +368,6 @@ def main():
 
                         if result.get("location"):
                             st.write(f"**Location:** {result['location']}")
-
-                        if result.get("chunk_strategy"):
-                            st.write(f"**Chunking Strategy:** {result['chunk_strategy']}")
 
                         st.write(result["text"])
                         st.divider()
