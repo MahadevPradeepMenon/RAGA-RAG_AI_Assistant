@@ -182,12 +182,17 @@ def display_chat_history():
                 with st.expander("View retrieved evidence"):
                     for index, result in enumerate(message["evidence"], start=1):
                         st.markdown(f"### Evidence {index}")
+
                         st.write(f"**Document:** {result['source']}")
+
                         if result.get("location"):
                             st.write(f"**Location:** {result['location']}")
+
+                        if result.get("chunk_strategy"):
+                            st.write(f"**Chunking Strategy:** {result['chunk_strategy']}")
+
                         st.write(result["text"])
                         st.divider()
-
 
 def get_last_assistant_answer() -> str | None:
     """
@@ -199,6 +204,35 @@ def get_last_assistant_answer() -> str | None:
 
     return None
 
+def detect_missing_document_type(user_question: str, documents: list[dict]) -> str | None:
+    """
+    Detect if the user asks about a document type that has not been uploaded.
+    """
+    question_lower = user_question.lower()
+
+    available_file_types = {
+        document.get("file_type")
+        for document in documents
+    }
+
+    requested_types = {
+        "presentation": ".pptx",
+        "powerpoint": ".pptx",
+        "pptx": ".pptx",
+        "slides": ".pptx",
+        "slide": ".pptx",
+        "pdf": ".pdf",
+        "word document": ".docx",
+        "docx": ".docx",
+        "document": None,
+    }
+
+    for keyword, file_type in requested_types.items():
+        if keyword in question_lower:
+            if file_type and file_type not in available_file_types:
+                return file_type
+
+    return None
 
 def handle_user_question(user_question: str, retriever, documents: list[dict]) -> dict:
     """
@@ -208,6 +242,14 @@ def handle_user_question(user_question: str, retriever, documents: list[dict]) -
     - a normal answer
     - a simplified normal answer
     """
+
+    missing_file_type = detect_missing_document_type(user_question, documents)
+
+    if missing_file_type:
+        return {
+            "answer": f"Sorry, I could not find any uploaded {missing_file_type} document for that question.",
+            "evidence": [],
+        }
     if is_follow_up_simplification(user_question):
         previous_answer = get_last_assistant_answer()
 
@@ -324,7 +366,15 @@ def main():
                 with st.expander("View retrieved evidence"):
                     for index, result in enumerate(response["evidence"], start=1):
                         st.markdown(f"### Evidence {index}")
+
                         st.write(f"**Document:** {result['source']}")
+
+                        if result.get("location"):
+                            st.write(f"**Location:** {result['location']}")
+
+                        if result.get("chunk_strategy"):
+                            st.write(f"**Chunking Strategy:** {result['chunk_strategy']}")
+
                         st.write(result["text"])
                         st.divider()
 
