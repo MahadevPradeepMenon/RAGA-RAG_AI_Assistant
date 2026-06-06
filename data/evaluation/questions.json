@@ -1,0 +1,22 @@
+[
+  {
+    "question": "How many annual leave days do employees get?",
+    "relevant_sources": ["vacation_policy.txt"]
+  },
+  {
+    "question": "Can employees work remotely?",
+    "relevant_sources": ["remote_work_policy.txt"]
+  },
+  {
+    "question": "Do employees need VPN access?",
+    "relevant_sources": ["remote_work_policy.txt"]
+  },
+  {
+    "question": "How do I reset my password?",
+    "relevant_sources": ["it_support_guide.txt"]
+  },
+  {
+    "question": "Who should employees contact for technical issues?",
+    "relevant_sources": ["it_support_guide.txt"]
+  }
+]

@@ -263,33 +263,13 @@ streamlit run app.py
 
 ---
 
-## Screenshots
+## Retrieval Evaluation
 
-Add screenshots here before submitting the project.
+RAGA includes a small retrieval evaluation script to measure whether the retriever is returning the expected source documents for test questions.
 
-Suggested screenshots:
+The evaluation set is stored in:
 
-1. RAGA home screen
-2. Document upload sidebar
-3. Question-answer example
-4. Retrieved evidence expanded
-5. Summary mode example
-6. Simple explanation mode example
-
----
-
-## Demo Video
-
-Add a short demo video link here.
-
-Suggested demo structure:
-
-1. Explain the problem RAGA solves
-2. Show uploaded documents
-3. Ask a document-based question
-4. Show retrieved evidence
-5. Ask for a document summary
-6. Ask for a simpler explanation
+data/evaluation/questions.json
 
 ---
 
