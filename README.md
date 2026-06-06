@@ -38,17 +38,42 @@ Image files such as `.png` and `.jpeg` are not currently supported because they 
 
 ## Tech Stack
 
-* Python
-* Streamlit
-* BM25 keyword retrieval
-* Sentence Transformers
-* Hybrid retrieval
-* PyPDF
-* python-docx
-* python-pptx
-* Pillow
+- Python
+- Streamlit
+- rank-bm25
+- sentence-transformers
+- `sentence-transformers/all-MiniLM-L6-v2`
+- pypdf
+- python-docx
+- python-pptx
+- Pillow
 
 ---
+
+## Retrieval Approach
+
+RAGA uses a hybrid retrieval approach that combines keyword retrieval and semantic vector retrieval.
+
+### Keyword Retrieval
+
+Keyword retrieval is handled using BM25 through the `rank-bm25` library. This helps RAGA find exact terms such as policy names, file-specific wording, technical terms, and keywords like "VPN", "annual leave", or "password reset".
+
+### Vector Retrieval
+
+Vector retrieval uses `sentence-transformers/all-MiniLM-L6-v2` to create semantic embeddings for document chunks and user questions.
+
+This allows RAGA to find relevant information even when the user phrases a question differently from the wording in the document.
+
+For example:
+
+- User asks: "Can I work from home?"
+- Document says: "Employees may work remotely."
+
+Vector retrieval helps connect those two meanings.
+
+### Hybrid Retrieval
+
+RAGA combines BM25 keyword results and vector search results using basic rank-fusion logic. This helps balance exact keyword matching with semantic meaning-based search.
 
 ## How It Works
 
@@ -276,6 +301,10 @@ Suggested demo structure:
 * Local answer generation is less fluent than a full LLM response
 * No authentication or user accounts
 * Not deployed yet
+* The system currently uses local extractive answer generation rather than a full LLM.
+* Vector retrieval uses `sentence-transformers/all-MiniLM-L6-v2`, which is lightweight and suitable for local semantic search, but may not perform as strongly as larger embedding models.
+* Chunking is document-type-aware but not yet evaluated across a large benchmark dataset.
+* No OCR support for scanned PDFs or image files.
 
 ---
 
