@@ -255,6 +255,22 @@ Based on these results, RAGA uses a vector-heavy hybrid retrieval configuration 
 
 ---
 
+### Embedding Model Comparison
+
+RAGA compares different embedding models to check whether vector retrieval performance improves with alternative models.
+
+On the current demo evaluation set, the default MiniLM model and the QA-focused MiniLM model both achieved perfect retrieval scores:
+
+| Model | Hit@1 | Hit@3 | Recall@3 | MRR |
+|---|---:|---:|---:|---:|
+| MiniLM baseline | 1.00 | 1.00 | 1.00 | 1.00 |
+| QA-focused MiniLM | 1.00 | 1.00 | 1.00 | 1.00 |
+| Paraphrase MiniLM | 0.95 | 1.00 | 1.00 | 0.97 |
+
+Based on these results, RAGA keeps `sentence-transformers/all-MiniLM-L6-v2` as the default embedding model because it is lightweight and performs strongly on the current evaluation set.
+
+---
+
 ### Current Evaluation Results
 
 Using the demo evaluation set of 20 questions across the included sample documents, RAGA achieved:

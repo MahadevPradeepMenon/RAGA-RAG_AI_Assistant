@@ -20,14 +20,16 @@ class HybridRetriever:
         keyword_weight: float = 0.3,
         vector_weight: float = 0.7,
         rrf_k: int = 60,
+        vector_model_name: str = "sentence-transformers/all-MiniLM-L6-V2",
     ):
         self.chunks = chunks
         self.keyword_retriever = KeywordRetriever(chunks)
-        self.vector_retriever = VectorRetriever(chunks)
+        self.vector_retriever = VectorRetriever(chunks, model_name=vector_model_name)
 
         self.keyword_weight = keyword_weight
         self.vector_weight = vector_weight
         self.rrf_k = rrf_k
+        self.vector_model_name = vector_model_name
 
     def search(self, query: str, top_k: int = 3, candidate_k: int = 10) -> list[dict]:
         """
