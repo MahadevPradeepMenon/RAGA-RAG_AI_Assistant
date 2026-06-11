@@ -271,6 +271,18 @@ Based on these results, RAGA keeps `sentence-transformers/all-MiniLM-L6-v2` as t
 
 ---
 
+### Evaluation Dashboard
+
+RAGA also includes a Streamlit evaluation dashboard for inspecting retrieval performance visually.
+
+To run it:
+
+```bash
+streamlit run evaluation_dashboard.py
+```
+
+---
+
 ### Current Evaluation Results
 
 Using the demo evaluation set of 20 questions across the included sample documents, RAGA achieved:
