@@ -273,6 +273,23 @@ data/evaluation/questions.json
 
 ---
 
+### Current Evaluation Results
+
+Using the demo evaluation set of 20 questions across the included sample documents, RAGA achieved:
+
+| Metric | Score |
+|---|---:|
+| Hit@1 | 0.95 |
+| Hit@3 | 1.00 |
+| Recall@3 | 1.00 |
+| MRR | 0.97 |
+
+These results are based on source-level retrieval evaluation using the included demo documents. 
+
+The evaluation set is intentionally small and based on demo documents, so these results should be treated as a basic validation of the retrieval pipeline rather than a full benchmark.
+
+---
+
 ## Current Limitations
 
 * No OCR support for scanned PDFs or image files

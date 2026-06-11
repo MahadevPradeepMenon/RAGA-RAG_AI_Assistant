@@ -4,7 +4,39 @@
     "relevant_sources": ["vacation_policy.txt"]
   },
   {
+    "question": "How much paid time off do employees receive each year?",
+    "relevant_sources": ["vacation_policy.txt"]
+  },
+  {
+    "question": "What is the company vacation allowance?",
+    "relevant_sources": ["vacation_policy.txt"]
+  },
+  {
+    "question": "When should vacation requests be submitted?",
+    "relevant_sources": ["vacation_policy.txt"]
+  },
+  {
+    "question": "Can unused leave days be carried over to the next year?",
+    "relevant_sources": ["vacation_policy.txt"]
+  },
+  {
+    "question": "Who approves carrying over unused leave days?",
+    "relevant_sources": ["vacation_policy.txt"]
+  },
+  {
     "question": "Can employees work remotely?",
+    "relevant_sources": ["remote_work_policy.txt"]
+  },
+  {
+    "question": "How many days per week can employees work from home?",
+    "relevant_sources": ["remote_work_policy.txt"]
+  },
+  {
+    "question": "Are remote employees required to attend team meetings?",
+    "relevant_sources": ["remote_work_policy.txt"]
+  },
+  {
+    "question": "What device should employees use for remote work?",
     "relevant_sources": ["remote_work_policy.txt"]
   },
   {
@@ -12,11 +44,39 @@
     "relevant_sources": ["remote_work_policy.txt"]
   },
   {
-    "question": "How do I reset my password?",
-    "relevant_sources": ["it_support_guide.txt"]
+    "question": "What is required when connecting to internal company systems remotely?",
+    "relevant_sources": ["remote_work_policy.txt"]
   },
   {
     "question": "Who should employees contact for technical issues?",
+    "relevant_sources": ["it_support_guide.txt"]
+  },
+  {
+    "question": "Where can employees find laptop setup instructions?",
+    "relevant_sources": ["it_support_guide.txt"]
+  },
+  {
+    "question": "How do employees reset their password?",
+    "relevant_sources": ["it_support_guide.txt"]
+  },
+  {
+    "question": "What should employees use for password resets?",
+    "relevant_sources": ["it_support_guide.txt"]
+  },
+  {
+    "question": "How should urgent IT issues be reported?",
+    "relevant_sources": ["it_support_guide.txt"]
+  },
+  {
+    "question": "Who handles laptop or system problems?",
+    "relevant_sources": ["it_support_guide.txt"]
+  },
+  {
+    "question": "What should I do if my laptop is not working?",
+    "relevant_sources": ["it_support_guide.txt"]
+  },
+  {
+    "question": "Where do I get help with computer problems?",
     "relevant_sources": ["it_support_guide.txt"]
   }
 ]
