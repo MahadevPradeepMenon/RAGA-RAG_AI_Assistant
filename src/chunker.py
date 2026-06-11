@@ -5,6 +5,16 @@ def count_words(text: str) -> int:
     return len(text.split())
 
 
+DEFAULT_CHUNKING_CONFIG = {
+    "txt_chunk_size": 100,
+    "txt_overlap": 20,
+    "paragraph_max_words": 140,
+    "paragraph_overlap": 1,
+    "pptx_max_words": 120,
+    "pptx_overlap": 20,
+}
+
+
 def split_into_paragraphs(text: str) -> list[str]:
     """
     Split text into paragraph-like sections.
@@ -108,8 +118,6 @@ def chunk_pptx_slide(text: str, max_words: int = 120, overlap: int = 20) -> list
 def choose_chunking_strategy(document: dict) -> str:
     """
     Choose a chunking strategy based on file type.
-
-    This makes chunking document-type-aware instead of one-size-fits-all.
     """
     file_type = document.get("file_type")
 
@@ -122,10 +130,13 @@ def choose_chunking_strategy(document: dict) -> str:
     return "word"
 
 
-def chunk_document(document: dict) -> list[dict]:
+def chunk_document(document: dict, config: dict | None = None) -> list[dict]:
     """
     Chunk a single document using the best strategy for its file type.
     """
+    if config is None:
+        config = DEFAULT_CHUNKING_CONFIG
+
     source = document["source"]
     text = document["text"]
     file_type = document.get("file_type")
@@ -134,13 +145,25 @@ def chunk_document(document: dict) -> list[dict]:
     strategy = choose_chunking_strategy(document)
 
     if strategy == "slide":
-        chunks = chunk_pptx_slide(text)
+        chunks = chunk_pptx_slide(
+            text,
+            max_words=config["pptx_max_words"],
+            overlap=config["pptx_overlap"],
+        )
 
     elif strategy == "paragraph":
-        chunks = chunk_by_paragraphs(text)
+        chunks = chunk_by_paragraphs(
+            text,
+            max_words=config["paragraph_max_words"],
+            paragraph_overlap=config["paragraph_overlap"],
+        )
 
     else:
-        chunks = chunk_by_words(text)
+        chunks = chunk_by_words(
+            text,
+            chunk_size=config["txt_chunk_size"],
+            overlap=config["txt_overlap"],
+        )
 
     chunked_documents = []
 
@@ -160,19 +183,19 @@ def chunk_document(document: dict) -> list[dict]:
     return chunked_documents
 
 
-def chunk_documents(documents: list[dict]) -> list[dict]:
+def chunk_documents(documents: list[dict], config: dict | None = None) -> list[dict]:
     """
     Convert loaded documents into chunks with metadata.
 
-    Supports document-type-aware chunking:
-    - TXT uses word chunking
-    - PDF/DOCX use paragraph chunking
-    - PPTX uses slide-aware chunking
+    Supports configurable document-type-aware chunking.
     """
+    if config is None:
+        config = DEFAULT_CHUNKING_CONFIG
+
     all_chunks = []
 
     for document in documents:
-        document_chunks = chunk_document(document)
+        document_chunks = chunk_document(document, config=config)
         all_chunks.extend(document_chunks)
 
     return all_chunks
