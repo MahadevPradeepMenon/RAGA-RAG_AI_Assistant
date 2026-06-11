@@ -17,8 +17,8 @@ class HybridRetriever:
     def __init__(
         self,
         chunks: list[dict],
-        keyword_weight: float = 0.5,
-        vector_weight: float = 0.5,
+        keyword_weight: float = 0.3,
+        vector_weight: float = 0.7,
         rrf_k: int = 60,
     ):
         self.chunks = chunks

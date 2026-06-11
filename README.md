@@ -101,39 +101,6 @@ The assistant does not answer from general knowledge. It searches the uploaded d
 
 ---
 
-### Keyword Retrieval
-
-Keyword retrieval is useful when exact terms matter, such as:
-
-* VPN
-* HR
-* password reset
-* annual leave
-* policy names
-* IT helpdesk
-
-### Vector Retrieval
-
-Vector retrieval is useful when the user phrases something differently from the document.
-
-For example:
-
-```text
-User question:
-Can I work from home?
-
-Document wording:
-Employees may work remotely up to three days per week.
-```
-
-Vector retrieval helps connect similar meanings even when the words are different.
-
-### Hybrid Retrieval
-
-Hybrid retrieval combines keyword retrieval and vector retrieval to improve accuracy across different question types.
-
----
-
 ## Local Answer Generation
 
 RAGA currently uses a free local answer generator rather than a paid LLM API.
@@ -270,6 +237,21 @@ The evaluation set is stored in:
 ```text 
 data/evaluation/questions.json
 ```
+---
+
+### Hybrid Weight Comparison
+
+RAGA compares different BM25/vector weighting settings for hybrid retrieval.
+
+On the current demo evaluation set, the vector-heavy setting performed best:
+
+| Setting | BM25 Weight | Vector Weight | Hit@1 | Hit@3 | Recall@3 | MRR |
+|---|---:|---:|---:|---:|---:|---:|
+| Keyword-heavy | 0.70 | 0.30 | 0.95 | 1.00 | 1.00 | 0.97 |
+| Balanced | 0.50 | 0.50 | 0.95 | 1.00 | 1.00 | 0.97 |
+| Vector-heavy | 0.30 | 0.70 | 1.00 | 1.00 | 1.00 | 1.00 |
+
+Based on these results, RAGA uses a vector-heavy hybrid retrieval configuration by default.
 
 ---
 
@@ -300,23 +282,6 @@ The evaluation set is intentionally small and based on demo documents, so these 
 * The evaluation set is currently small and based on demo documents
 * No authentication or user accounts
 * Not deployed yet
-
----
-
-## Future Improvements
-
-Possible future improvements include:
-
-* Expanding the retrieval evaluation set across more document types
-* Comparing different chunk sizes and chunking strategies
-* Comparing different embedding models for retrieval quality
-* Experimenting with different BM25/vector weighting schemes
-* OCR support for scanned PDFs and images
-* Optional OpenAI or local LLM answer generation
-* FastAPI backend
-* Multilingual answers
-* Dashboard for retrieval failures and document coverage
-* Deployment to Streamlit Community Cloud or another hosting platform
 
 ---
 
