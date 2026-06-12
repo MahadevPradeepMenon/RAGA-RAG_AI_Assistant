@@ -323,6 +323,18 @@ The evaluation set is intentionally small and based on demo documents, so these 
 
 ---
 
+## Optional Future Extensions
+
+RAGA is complete as a local-first RAG assistant and deployed demo. Possible optional extensions include:
+
+* OCR support for scanned PDFs and images
+* Optional LLM-based answer generation
+* FastAPI backend for API-based access
+* Multilingual responses
+* More advanced monitoring for retrieval failures
+
+---
+
 ## Why This Project Matters
 
 RAGA demonstrates practical AI system design rather than just a chatbot interface.
