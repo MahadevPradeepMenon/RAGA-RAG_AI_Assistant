@@ -8,6 +8,16 @@ RAGA provides a simple chat interface where users can ask questions and receive 
 
 ---
 
+## Live Demo
+
+Try RAGA here:
+
+https://raga-rag-assistant.streamlit.app/
+
+Note: The first load may take a little time because the app loads the local embedding model.
+
+---
+
 ## Features
 
 * Upload and read company documents
