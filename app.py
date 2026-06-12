@@ -76,7 +76,7 @@ def save_uploaded_file(uploaded_file):
 
 def apply_custom_styles():
     """
-    Apply light blue and white styling.
+    Apply light blue and white styling with better text contrast.
     """
     st.markdown(
         """
@@ -89,6 +89,38 @@ def apply_custom_styles():
         section[data-testid="stSidebar"] {
             background-color: #d8f0ff;
             border-right: 1px solid #b6e0fe;
+        }
+
+        /* Make ALL sidebar text dark and readable */
+        section[data-testid="stSidebar"] * {
+            color: #0f172a !important;
+        }
+
+        /* Sidebar headings */
+        section[data-testid="stSidebar"] h1,
+        section[data-testid="stSidebar"] h2,
+        section[data-testid="stSidebar"] h3 {
+            color: #003b66 !important;
+            font-weight: 700;
+        }
+
+        /* File uploader label and helper text */
+        section[data-testid="stSidebar"] label,
+        section[data-testid="stSidebar"] p,
+        section[data-testid="stSidebar"] span,
+        section[data-testid="stSidebar"] div {
+            color: #0f172a !important;
+        }
+
+        /* File uploader box */
+        section[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] {
+            background-color: #ffffff !important;
+            border: 1px solid #94a3b8 !important;
+            border-radius: 12px !important;
+        }
+
+        section[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] * {
+            color: #0f172a !important;
         }
 
         h1, h2, h3 {
@@ -104,7 +136,7 @@ def apply_custom_styles():
         }
 
         .raga-caption {
-            color: #64748b;
+            color: #475569;
             font-size: 16px;
             margin-top: -6px;
         }
@@ -123,6 +155,7 @@ def apply_custom_styles():
             border-radius: 10px;
             border: none;
             padding: 0.5rem 1rem;
+            font-weight: 600;
         }
 
         .stButton > button:hover {
