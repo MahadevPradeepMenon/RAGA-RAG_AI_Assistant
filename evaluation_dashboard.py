@@ -169,6 +169,82 @@ def get_document_coverage() -> pd.DataFrame:
 
     return pd.DataFrame(rows)
 
+def apply_dashboard_styles():
+    """
+    Apply professional dashboard styling.
+    """
+    st.markdown(
+        """
+        <style>
+        .stApp {
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+        .block-container {
+            max-width: 1150px;
+            padding-top: 3rem;
+            padding-bottom: 5rem;
+        }
+
+        #MainMenu {
+            visibility: hidden;
+        }
+
+        footer {
+            visibility: hidden;
+        }
+
+        h1, h2, h3 {
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        section[data-testid="stSidebar"] {
+            background: #0f172a;
+            border-right: 1px solid #1e293b;
+        }
+
+        section[data-testid="stSidebar"] * {
+            color: #f8fafc !important;
+        }
+
+        .stMetric {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 3px 12px rgba(15, 23, 42, 0.05);
+        }
+
+        div[data-testid="stDataFrame"] {
+            background-color: #ffffff;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+        }
+
+        div[data-testid="stExpander"] {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+        }
+
+        .stButton > button {
+            background-color: #2563eb;
+            color: #ffffff !important;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+        }
+
+        .stButton > button:hover {
+            background-color: #1d4ed8;
+            color: #ffffff !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 def main():
     st.set_page_config(
@@ -176,6 +252,8 @@ def main():
         page_icon=dashboard_logo,
         layout="wide",
     )
+
+    apply_dashboard_styles()
 
     col1, col2 = st.columns([0.7, 8], gap="small")
 

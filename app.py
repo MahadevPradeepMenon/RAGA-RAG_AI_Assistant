@@ -27,7 +27,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.set_option("client.toolbarMode","minimal")
+
 
 def get_file_signature():
     """
@@ -76,96 +76,217 @@ def save_uploaded_file(uploaded_file):
 
 def apply_custom_styles():
     """
-    Apply light blue and white styling with better text contrast.
+    Apply a professional RAGA interface theme.
     """
     st.markdown(
         """
         <style>
+        /* ---------- GLOBAL APP ---------- */
+
         .stApp {
-            background: linear-gradient(180deg, #eaf7ff 0%, #ffffff 45%);
-            color: #102a43;
+            background: #f8fafc;
+            color: #0f172a;
         }
 
-        section[data-testid="stSidebar"] {
-            background-color: #d8f0ff;
-            border-right: 1px solid #b6e0fe;
+        .block-container {
+            max-width: 1120px;
+            padding-top: 3rem;
+            padding-bottom: 7rem;
         }
 
-        /* Make ALL sidebar text dark and readable */
-        section[data-testid="stSidebar"] * {
-            color: #0f172a !important;
+        #MainMenu {
+            visibility: hidden;
         }
 
-        /* Sidebar headings */
-        section[data-testid="stSidebar"] h1,
-        section[data-testid="stSidebar"] h2,
-        section[data-testid="stSidebar"] h3 {
-            color: #003b66 !important;
-            font-weight: 700;
+        footer {
+            visibility: hidden;
         }
 
-        /* File uploader label and helper text */
-        section[data-testid="stSidebar"] label,
-        section[data-testid="stSidebar"] p,
-        section[data-testid="stSidebar"] span,
-        section[data-testid="stSidebar"] div {
-            color: #0f172a !important;
-        }
-
-        /* File uploader box */
-        section[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] {
-            background-color: #ffffff !important;
-            border: 1px solid #94a3b8 !important;
-            border-radius: 12px !important;
-        }
-
-        section[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] * {
-            color: #0f172a !important;
+        header {
+            background: transparent !important;
         }
 
         h1, h2, h3 {
-            color: #0b4f71;
+            color: #0f172a;
+            letter-spacing: -0.02em;
         }
 
+        p, span, label, div {
+            font-family: "Inter", "Segoe UI", sans-serif;
+        }
+
+        /* ---------- SIDEBAR ---------- */
+
+        section[data-testid="stSidebar"] {
+            background: #0f172a;
+            border-right: 1px solid #1e293b;
+        }
+
+        section[data-testid="stSidebar"] * {
+            color: #f8fafc !important;
+        }
+
+        section[data-testid="stSidebar"] h1,
+        section[data-testid="stSidebar"] h2,
+        section[data-testid="stSidebar"] h3 {
+            color: #ffffff !important;
+            font-weight: 800;
+        }
+
+        section[data-testid="stSidebar"] p,
+        section[data-testid="stSidebar"] label,
+        section[data-testid="stSidebar"] span {
+            color: #cbd5e1 !important;
+        }
+
+        /* Sidebar file names */
+        section[data-testid="stSidebar"] .stMarkdown {
+            color: #e2e8f0 !important;
+        }
+
+        /* File uploader */
+        section[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] {
+            background-color: #1e293b !important;
+            border: 1px solid #334155 !important;
+            border-radius: 14px !important;
+            padding: 1rem !important;
+        }
+
+        section[data-testid="stSidebar"] [data-testid="stFileUploaderDropzone"] * {
+            color: #f8fafc !important;
+        }
+
+        section[data-testid="stSidebar"] button {
+            background-color: #2563eb !important;
+            color: #ffffff !important;
+            border-radius: 10px !important;
+            border: none !important;
+            font-weight: 700 !important;
+        }
+
+        section[data-testid="stSidebar"] button:hover {
+            background-color: #1d4ed8 !important;
+            color: #ffffff !important;
+        }
+
+        /* ---------- RAGA HEADER ---------- */
+
         .raga-title {
-            font-size: 42px;
-            font-weight: 700;
-            color: #003b66;
+            font-size: 46px;
+            font-weight: 850;
+            color: #0f172a;
             margin: 0;
             padding: 0;
+            letter-spacing: -1.5px;
+            line-height: 1;
         }
 
         .raga-caption {
             color: #475569;
             font-size: 16px;
-            margin-top: -6px;
+            margin-top: 6px;
         }
+
+        /* ---------- STATUS / ALERT BOXES ---------- */
+
+        div[data-testid="stAlert"] {
+            border-radius: 14px;
+            border: 1px solid #dbeafe;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        }
+
+        /* ---------- CHAT MESSAGES ---------- */
 
         div[data-testid="stChatMessage"] {
             background-color: #ffffff;
-            border: 1px solid #ccecff;
-            border-radius: 16px;
-            padding: 12px;
-            box-shadow: 0 2px 8px rgba(11, 79, 113, 0.08);
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 16px;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
         }
 
+        div[data-testid="stChatMessage"] p {
+            color: #0f172a;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* ---------- CHAT INPUT ---------- */
+
+        div[data-testid="stChatInput"] {
+            background-color: #f8fafc !important;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        textarea {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 14px !important;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        textarea::placeholder {
+            color: #64748b !important;
+        }
+
+        /* ---------- BUTTONS ---------- */
+
         .stButton > button {
-            background-color: #0ea5e9;
-            color: white;
+            background-color: #2563eb;
+            color: #ffffff !important;
             border-radius: 10px;
             border: none;
-            padding: 0.5rem 1rem;
-            font-weight: 600;
+            padding: 0.6rem 1rem;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
         }
 
         .stButton > button:hover {
-            background-color: #0284c7;
-            color: white;
+            background-color: #1d4ed8;
+            color: #ffffff !important;
+            border: none;
         }
 
+        /* ---------- EXPANDERS / EVIDENCE ---------- */
+
         div[data-testid="stExpander"] {
-            background-color: #f8fcff;
-            border-radius: 12px;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+        }
+
+        div[data-testid="stExpander"] summary {
+            color: #0f172a !important;
+            font-weight: 650;
+        }
+
+        div[data-testid="stExpander"] p {
+            color: #334155;
+        }
+
+        /* ---------- TABLES / DATAFRAMES ---------- */
+
+        div[data-testid="stDataFrame"] {
+            background-color: #ffffff;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* ---------- SMALL POLISH ---------- */
+
+        hr {
+            border-color: #e2e8f0;
+        }
+
+        a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
         }
         </style>
         """,
